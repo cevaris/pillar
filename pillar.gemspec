@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Pillar::VERSION
   spec.authors       = ["Adam Cardenas"]
   spec.email         = ["cevaris@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
-  spec.homepage      = ""
+  spec.summary       = %q{Highly reliable, distributed process management.}
+  spec.description   = %q{Highly reliable, distributed process management.}
+  spec.homepage      = "https://github.com/cevaris/pillar"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")

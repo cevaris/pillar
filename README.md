@@ -20,7 +20,10 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+
+## Overview
+
+## 
 
 ## Contributing
 
@@ -29,3 +32,12 @@ TODO: Write usage instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+
+
+
+## Sources
+- [Creating a gem script](http://blog.thepete.net/blog/2010/11/20/creating-and-publishing-your-first-ruby/)
+- [Etcd API](https://coreos.com/docs/distributed-configuration/etcd-api/)
+- [Monit Examples](http://www.tecmint.com/how-to-install-and-setup-monit-linux-process-and-services-monitoring-program/)
+- [Resque Inspiration](https://github.com/resque/resque)

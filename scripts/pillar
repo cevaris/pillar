@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require 'pillar'
+
+ETCD_HOST = '127.0.0.1'
+ETCD_PORT = '4001'
+
+def get_dir(key)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.get(key).children
+  rescue JSON::ParserError => e
+    e
+  end
+end
+
+get_dir("/workers/").each do |worker|
+  puts worker.value
+  puts ''
+end

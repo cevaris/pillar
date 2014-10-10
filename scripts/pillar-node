@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+ 
+require 'pillar'
+require 'sinatra'
+
+get '/' do
+  {status: 'ok'}.to_json
+end
+post '/workers' do
+  "Creating User"
+end

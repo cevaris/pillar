@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require 'pillar'
+
+ETCD_HOST = '127.0.0.1'
+ETCD_PORT = '4001'
+
+params = {
+  worker_id: SecureRandom.uuid,
+  name: "worker-#{Pillar.epoc}",
+  args: "Do something with this please."
+}
+
+puts params
+
+def get(key)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.get(key).value
+  rescue JSON::ParserError => e
+    e
+  end
+end
+
+def set(key, value)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.set(key, {value: value})
+  rescue JSON::ParserError => e
+    e
+  end
+end
+
+# puts set("/workers", {dir: true})
+puts set("/workers/#{params[:worker_id]}", params.to_json)
+puts get("/workers/#{params[:worker_id]}")
