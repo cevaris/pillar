@@ -1,0 +1,9 @@
+# check process print-time
+#    with pidfile /tmp/print-time.pid
+#    start program = "/usr/local/rbenv/shims/bundle exec /git/pillar/scripts/print-time" as uid "vagrant"
+#    stop  program = "/bin/kill $(/bin/cat /tmp/print-time.pid)" as uid "vagrant"
+
+check process print-time
+   with pidfile /tmp/print-time.pid
+   start program = "/bin/su -c ' /usr/local/rbenv/shims/bundle exec /git/pillar/scripts/print-time' vagrant"
+   stop  program = "/bin/kill $(/bin/cat /tmp/print-time.pid)"

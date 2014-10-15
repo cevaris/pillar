@@ -1,36 +1,30 @@
 #!/usr/bin/env ruby
 
 require 'pillar'
+require 'childprocess'
+require 'net/http'
+require 'json'
 
-ETCD_HOST = '127.0.0.1'
-ETCD_PORT = '4001'
+AGENT_HOSTS = ['127.0.0.1:4567']
 
-params = {
+# ETCD_HOST = '127.0.0.1'
+# ETCD_PORT = '4001'
+
+payload = {
   worker_id: SecureRandom.uuid,
-  name: "worker-#{Pillar.epoc}",
+  name: "worker-#{Pillar.epoch}",
   args: "Do something with this please."
-}
+}.to_json
 
-puts params
+# puts payload
 
-def get(key)
-  begin
-    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
-    client.get(key).value
-  rescue JSON::ParserError => e
-    e
-  end
-end
+# host = AGENT_HOSTS.sample
+# # `curl -X POST -H "application/json" -d '#{payload}' #{host}/workers`
+# uri = URI.parse("http://#{host}/workers")
+# puts uri
+# puts Net::HTTP.post_form(uri, {worker: payload}).response
 
-def set(key, value)
-  begin
-    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
-    client.set(key, {value: value})
-  rescue JSON::ParserError => e
-    e
-  end
-end
+# process = ChildProcess.build("/git/pillar/scripts/print-time", '')
+# process.detach = true
+# process.start
 
-# puts set("/workers", {dir: true})
-puts set("/workers/#{params[:worker_id]}", params.to_json)
-puts get("/workers/#{params[:worker_id]}")

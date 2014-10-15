@@ -1,5 +1,5 @@
 module Pillar
-  def self.epoc 
+  def self.epoch
     Time.now.utc.to_i
   end
   def self.now 

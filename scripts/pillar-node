@@ -3,9 +3,91 @@
 require 'pillar'
 require 'sinatra'
 
+
+
+ETCD_HOST = '127.0.0.1'
+ETCD_PORT = '4001'
+
+# puts set("/workers", {dir: true})
+# puts set("/workers/#{params[:worker_id]}", params.to_json)
+# puts get("/workers/#{params[:worker_id]}")
+
+
+def get(key)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.get(key).value
+  rescue JSON::ParserError
+    puts caller
+    nil
+  end
+end
+
+def set(key, value)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.create(key, {value: value})
+  rescue JSON::ParserError
+    puts caller
+    false
+  end
+end
+
+def get_dir(key)
+  begin
+    client = Etcd.client(host: ETCD_HOST, port: ETCD_PORT)
+    client.get(key).children
+  rescue JSON::ParserError, Etcd::KeyNotFound
+    puts caller
+    []
+  end
+end
+
+
+
+
+
 get '/' do
   {status: 'ok'}.to_json
 end
-post '/workers' do
-  "Creating User"
+
+get '/workers' do
+  response = []
+  get_dir('/workers').each do |worker|
+    puts worker.value.class
+    response << worker.value if worker.value and not worker.value.empty?
+  end  
+  response.to_json
 end
+
+
+post '/workers' do
+  puts params
+  worker = JSON.parse!(params[:worker],symbolize_names: true)
+  puts "Setting '/workers/#{worker[:worker_id]}'=>'#{worker.to_json}'"
+  puts set("/workers/#{worker[:worker_id]}", worker.to_json).inspect
+
+
+  # Daemons.call do
+  #   puts "3"
+  #   loop do
+  #     wait 5
+  #     puts "#{Process.pid} checkin #{Pillar.epoch}"
+  #   end
+  # end
+
+  # process = ChildProcess.build("/usr/local/script/print-time", "10")
+  # process.detach = true
+  # process.start
+
+
+  worker.to_json
+end
+
+
+
+
+
+
+
+

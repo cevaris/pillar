@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require 'pillar'
+
+logger = Logger.new('/tmp/print-time.log') 
+PidFile.new(piddir: '/tmp', pidfile: 'print-time.pid')
+
+loop do
+  logger.debug "Checkin: #{Process.pid} #{Pillar.epoch}"
+  sleep 5
+end

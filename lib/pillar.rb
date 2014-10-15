@@ -3,6 +3,8 @@ require 'pp'
 require 'time'
 
 require 'etcd'
+require 'pidfile'
+require 'logger'
 
 
 require "pillar/version"
