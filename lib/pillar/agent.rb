@@ -3,19 +3,22 @@ module Pillar
   class Agent
   end
 
-  class ControllerAgent < Agent
-    def initialize(host)
-      super
+  # class Controller < Agent
+  #   def initialize(host)
+  #     super
 
-      @host = host
-      @nodes = ['127.0.0.1:5000'] # Query Etcd
-    end
-  end
+  #     @host = host
+  #     @nodes = ['127.0.0.1:5000'] # Query Etcd
+  #   end
+  # end
 
-  class NodeAgent < Agent
-    def initializes
-    end
+  # class Worker < Agent
+  #   def initializes
+  #     super
+  #   end
 
-  end
+  #   def execute
+  #   end
+  # end
 
 end
