@@ -48,9 +48,15 @@ require 'json'
 
 
 puts Pillar::Worker.new.inspect
-la = JSON.parse (JSON.generate Pillar::Worker.new)
-puts la.class
-puts la.inspect
+params = { args: ['/location/of/my/script', '--arg==32'], env: {MY_ENV: '/tmp/dump'} }
+wrk = Pillar::Worker.new params
+puts wrk.to_json
+puts JSON.parse wrk.to_json
+puts (Pillar::Serialization.from_json wrk.to_json).inspect
+# puts la.class
+# # puts la.instance_variables.each {|x| instance_variable_get(x) }
+# la.instance_variables.each {|x| puts la.instance_variable_get(x) }
+# puts la.inspect
 # puts MyWorker.json_create(MyWorker.new.to_json)
 
 
