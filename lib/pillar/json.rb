@@ -19,4 +19,13 @@ module Pillar
     end
 
   end
+
+end
+
+class String
+  def from_json
+      o = JSON.parse self
+      clazz = Module.const_get o['json_class']
+      clazz.new(o['data'])
+  end
 end
