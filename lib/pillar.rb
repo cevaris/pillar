@@ -10,9 +10,11 @@ require "sinatra/base"
 
 require "pillar/version"
 require "pillar/util"
+require "pillar/json"
 require "pillar/worker"
 require "pillar/controller"
 require "pillar/configuration"
+
 
 
 module Pillar
