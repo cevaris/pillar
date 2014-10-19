@@ -1,16 +1,17 @@
 require 'securerandom'
 require 'pp'
 require 'time'
+require 'logger'
 
 require 'etcd'
 require 'pidfile'
-require 'logger'
-
+require 'sinatra'
+require "sinatra/base"
 
 require "pillar/version"
 require "pillar/util"
 require "pillar/worker"
-require "pillar/agent"
+require "pillar/controller"
 require "pillar/configuration"
 
 

@@ -1,20 +1,20 @@
 #!/usr/bin/env ruby
 
 require 'pillar'
-require 'childprocess'
-require 'net/http'
+# require 'childprocess'
+# require 'net/http'
 require 'json'
 
-AGENT_HOSTS = ['127.0.0.1:4567']
+# AGENT_HOSTS = ['127.0.0.1:4567']
 
 # ETCD_HOST = '127.0.0.1'
 # ETCD_PORT = '4001'
 
-payload = {
-  worker_id: SecureRandom.uuid,
-  name: "worker-#{Pillar.epoch}",
-  args: "Do something with this please."
-}.to_json
+# payload = {
+#   worker_id: SecureRandom.uuid,
+#   name: "worker-#{Pillar.epoch}",
+#   args: "Do something with this please."
+# }.to_json
 
 # puts payload
 
@@ -27,4 +27,30 @@ payload = {
 # process = ChildProcess.build("/git/pillar/scripts/print-time", '')
 # process.detach = true
 # process.start
+
+
+
+
+# example = Pillar::Worker.configure do |w|
+
+#   w.env  = {:MY_ENV => '/tmp/dump'}
+#   w.args = ['/location/of/my/script', '--arg==32']
+
+#   w.execute = lambda do
+#     puts @args
+#     puts @env
+#   end
+
+# end
+
+# example.execute.call
+
+
+
+puts Pillar::Worker.new.inspect
+la = JSON.parse (JSON.generate Pillar::Worker.new)
+puts la.class
+puts la.inspect
+# puts MyWorker.json_create(MyWorker.new.to_json)
+
 
