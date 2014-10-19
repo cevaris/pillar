@@ -2,6 +2,7 @@ require 'securerandom'
 require 'pp'
 require 'time'
 require 'logger'
+require 'fileutils'
 
 require 'etcd'
 require 'pidfile'
@@ -16,7 +17,6 @@ require "pillar/controller"
 require "pillar/configuration"
 
 
-
 module Pillar
 
   class << self
@@ -27,8 +27,17 @@ module Pillar
     self.configuration ||= Configuration.new
     yield(configuration)
   end
+
+  def self.client_setup
+    Pillar.configure do |config|; end
+    # Confirm directory exits
+    FileUtils::mkdir_p Pillar.configuration.pid_dir
+    PidFile.new(piddir: Pillar.configuration.pid_dir, pidfile: "pillar.#{Process.pid}.pid")
+    puts Pillar.configuration.inspect
+  end
      
 end
+
 
 # module Etcd
 #   def self.connect

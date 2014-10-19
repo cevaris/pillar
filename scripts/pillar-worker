@@ -2,13 +2,8 @@
 
 require 'pillar'
 # require 'childprocess'
-# require 'net/http'
+require 'net/http'
 require 'json'
-
-# AGENT_HOSTS = ['127.0.0.1:4567']
-
-# ETCD_HOST = '127.0.0.1'
-# ETCD_PORT = '4001'
 
 # payload = {
 #   worker_id: SecureRandom.uuid,
@@ -17,46 +12,24 @@ require 'json'
 # }.to_json
 
 # puts payload
+Pillar.configure do |config|
+end
 
-# host = AGENT_HOSTS.sample
-# # `curl -X POST -H "application/json" -d '#{payload}' #{host}/workers`
-# uri = URI.parse("http://#{host}/workers")
-# puts uri
+host = Pillar.configuration.hosts.sample
+payload = Pillar::Worker.new(
+  args: ['/git/pillar/scripts/print-time', ''], 
+  env: {"MY_ENV" => '/tmp/dump/blah'}
+)
+# `curl -X POST -H "application/json" -d '#{payload}' #{host}/workers`
+# uri = URI.parse("http://#{host}:4567/workers")
 # puts Net::HTTP.post_form(uri, {worker: payload}).response
+# puts Net::HTTP.post_form(uri, payload.to_json).response
 
-# process = ChildProcess.build("/git/pillar/scripts/print-time", '')
-# process.detach = true
-# process.start
+# puts Pillar::Worker.new.inspect
+# params = { args: ['/location/of/my/script', '--arg==32'], env: {MY_ENV: '/tmp/dump'} }
+# wrk = Pillar::Worker.new params
+# puts wrk.to_json
+# puts JSON.parse wrk.to_json
+# puts (Pillar::Serialization.from_json wrk.to_json).inspect
 
-
-
-
-# example = Pillar::Worker.configure do |w|
-
-#   w.env  = {:MY_ENV => '/tmp/dump'}
-#   w.args = ['/location/of/my/script', '--arg==32']
-
-#   w.execute = lambda do
-#     puts @args
-#     puts @env
-#   end
-
-# end
-
-# example.execute.call
-
-
-
-puts Pillar::Worker.new.inspect
-params = { args: ['/location/of/my/script', '--arg==32'], env: {MY_ENV: '/tmp/dump'} }
-wrk = Pillar::Worker.new params
-puts wrk.to_json
-puts JSON.parse wrk.to_json
-puts (Pillar::Serialization.from_json wrk.to_json).inspect
-# puts la.class
-# # puts la.instance_variables.each {|x| instance_variable_get(x) }
-# la.instance_variables.each {|x| puts la.instance_variable_get(x) }
-# puts la.inspect
-# puts MyWorker.json_create(MyWorker.new.to_json)
-
-
+pid = system(payload.env, payload.args.join(' '))

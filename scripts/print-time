@@ -2,8 +2,11 @@
 
 require 'pillar'
 
-logger = Logger.new('/tmp/print-time.log') 
-PidFile.new(piddir: '/tmp', pidfile: 'print-time.pid')
+Pillar.client_setup
+
+logger = Logger.new('/tmp/print-time.log')
+
+puts ENV['MY_ENV']
 
 loop do
   logger.debug "Checkin: #{Process.pid} #{Pillar.epoch}"
