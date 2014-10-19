@@ -16,10 +16,17 @@ Pillar.configure do |config|
 end
 
 # host = Pillar.configuration.hosts.sample
+# payload = Pillar::Worker.new(
+#   args: ['/git/pillar/scripts/print-time', ''], 
+#   env: {"MY_ENV" => '/tmp/dump/blah'}
+# )
+
+
 payload = Pillar::Worker.new(
-  args: ['/git/pillar/scripts/print-time', ''], 
+  args: ['/git/pillar/examples/print-time', ''], 
   env: {"MY_ENV" => '/tmp/dump/blah'}
 )
+
 # `curl -X POST -H "application/json" -d '#{payload}' #{host}/workers`
 # uri = URI.parse("http://#{host}:4567/workers")
 # puts Net::HTTP.post_form(uri, {worker: payload}).response

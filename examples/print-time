@@ -22,7 +22,7 @@ trap onExit EXIT
 
 ################
 # Actual Worker Code
-echo $MY_ENV
+echo "bash $MY_ENV"
 while [ true ]
 do
     EPOCH=$(date +%s)

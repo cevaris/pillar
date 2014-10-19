@@ -15,6 +15,9 @@ module Pillar
     end
 
     def spawn
+      puts @args
+      raise "No file/script defined" if @args.empty?
+      raise "File/Script does not exist: #{@args[0]}" if not File.exist?(@args[0])
       system(@env, @args.join(' '))
     end
 

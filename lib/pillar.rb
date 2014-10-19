@@ -29,13 +29,13 @@ module Pillar
     yield(configuration)
   end
 
-  def self.client_setup
-    self.configuration ||= Configuration.new
-    # Confirm directory exits
-    FileUtils::mkdir_p Pillar.configuration.pid_dir
-    # Create pillar pid file
-    # PidFile.new(piddir: Pillar.configuration.pid_dir, pidfile: "pillar.#{Process.pid}.pid")
-  end
+  # def self.client_setup
+  #   self.configuration ||= Configuration.new
+  #   # Confirm directory exits
+  #   FileUtils::mkdir_p Pillar.configuration.pid_dir
+  #   # Create pillar pid file
+  #   # PidFile.new(piddir: Pillar.configuration.pid_dir, pidfile: "pillar.#{Process.pid}.pid")
+  # end
      
 end
 

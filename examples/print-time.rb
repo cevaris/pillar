@@ -9,7 +9,7 @@ PidFile.new(piddir: PID_PATH, pidfile: "pillar.#{Process.pid}.pid")
 
 logger = Logger.new('/tmp/print-time.log')
 
-puts ENV['MY_ENV']
+puts "ruby #{ENV['MY_ENV']}"
 
 loop do
   logger.debug "Checkin: #{Process.pid} #{Time.now.utc.to_i}"

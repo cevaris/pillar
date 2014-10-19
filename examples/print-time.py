@@ -24,7 +24,7 @@ atexit.register(on_exit)
 
 
 #### Actual worker code
-print os.environ.get('MY_ENV')
+print "python %s" % os.environ.get('MY_ENV')
 
 logging.basicConfig(filename='/tmp/print-time.log',level=logging.DEBUG)
 
