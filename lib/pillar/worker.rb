@@ -14,6 +14,10 @@ module Pillar
       end
     end
 
+    def spawn
+      system(@env, @args.join(' '))
+    end
+
   end
 
 end

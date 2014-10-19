@@ -15,7 +15,7 @@ require 'json'
 Pillar.configure do |config|
 end
 
-host = Pillar.configuration.hosts.sample
+# host = Pillar.configuration.hosts.sample
 payload = Pillar::Worker.new(
   args: ['/git/pillar/scripts/print-time', ''], 
   env: {"MY_ENV" => '/tmp/dump/blah'}
@@ -32,4 +32,4 @@ payload = Pillar::Worker.new(
 # puts JSON.parse wrk.to_json
 # puts (Pillar::Serialization.from_json wrk.to_json).inspect
 
-pid = system(payload.env, payload.args.join(' '))
+payload.spawn

@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'pillar'
+
+Pillar.configure do |config|
+end
+
+listener = Listen.to(Pillar.configuration.pid_dir, only: /pillar\.\d+\.pid$/) do |modified, added, removed|
+  puts "modified absolute path: #{modified}" unless modified.empty?
+  puts "added absolute path: #{added}" unless added.empty?
+  puts "removed absolute path: #{removed}" unless removed.empty?
+end
+listener.start # not blocking
+sleep

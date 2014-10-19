@@ -6,6 +6,7 @@ require 'fileutils'
 
 require 'etcd'
 require 'pidfile'
+require 'listen'
 require 'sinatra'
 require "sinatra/base"
 
@@ -29,11 +30,11 @@ module Pillar
   end
 
   def self.client_setup
-    Pillar.configure do |config|; end
+    self.configuration ||= Configuration.new
     # Confirm directory exits
     FileUtils::mkdir_p Pillar.configuration.pid_dir
-    PidFile.new(piddir: Pillar.configuration.pid_dir, pidfile: "pillar.#{Process.pid}.pid")
-    puts Pillar.configuration.inspect
+    # Create pillar pid file
+    # PidFile.new(piddir: Pillar.configuration.pid_dir, pidfile: "pillar.#{Process.pid}.pid")
   end
      
 end
