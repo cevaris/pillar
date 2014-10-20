@@ -13,5 +13,8 @@
 *.a
 mkmf.log
 
+
+**/target
 *.etcd
 *.class
+*.jar
