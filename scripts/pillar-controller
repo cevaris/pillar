@@ -5,10 +5,77 @@ require 'pillar'
 Pillar.configure do |config|
 end
 
-listener = Listen.to(Pillar.configuration.pid_dir, only: /pillar\.\d+\.pid$/) do |modified, added, removed|
-  puts "modified absolute path: #{modified}" unless modified.empty?
-  puts "added absolute path: #{added}" unless added.empty?
-  puts "removed absolute path: #{removed}" unless removed.empty?
+def etcd
+ Etcd.client( host: Pillar.configuration.etcd_hosts, port: 4001 )
 end
-listener.start # not blocking
+
+service_threads = []
+child_threads   = []
+
+at_exit {
+  print 'Cleaning up....'
+  child_threads.each   {|t| t.kill}
+  service_threads.each {|t| t.kill}
+  puts 'done'
+  exit!
+}
+
+
+service_threads << Thread.new {
+  listener = Listen.to(Pillar.configuration.pid_dir, only: /pillar\.\w+\.pid$/) do |modified, added, removed|
+    puts "modified absolute path: #{modified}" unless modified.empty?
+    puts "added absolute path: #{added}" unless added.empty?
+    
+    unless removed.empty?
+      puts "removed absolute path: #{removed}" 
+      path = removed.first
+      # puts path.match(/pillar\.(\w+)\.pid$/).inspect
+      worker_id = path.match(/pillar\.(\w+)\.pid$/)[1]
+      if worker_id
+        puts "Found WorkerID #{worker_id}"
+      end
+    end
+
+  end
+  listener.start # not blocking
+  puts "Watching pid path #{Pillar.configuration.pid_dir}"
+  sleep
+}
+
+service_threads << Thread.new {
+  watch_client = etcd
+
+  puts "Watching Etcd Key #{Pillar.configuration.etcd_hosts}:4001/v2/keys/workers"
+  loop do 
+    etcd_event = watch_client.watch('/workers', recursive:true)
+
+    puts "Found Worker Event #{etcd_event.key}"
+
+    # Spawn new thread to handle new watch request
+    child_threads << Thread.new {
+      get_client = etcd
+      
+      case etcd_event.action
+      when 'set'
+        new_worker_json = get_client.get(etcd_event.key).value
+        new_worker      = Pillar::Serialization.from_json new_worker_json
+        puts "Got new worker #{etcd_event.key} #{new_worker}"
+        begin
+          new_worker.spawn
+        rescue => e
+          puts e.inspect
+          puts caller
+        end
+        puts "Spawned worker"
+      end
+
+      puts "Processed Worker Event #{etcd_event.key}"
+    }    
+  end
+}
+
 sleep
+
+
+
+

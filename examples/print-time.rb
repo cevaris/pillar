@@ -4,8 +4,9 @@ require 'fileutils'
 require 'pidfile'
 require 'logger'
 
-PID_PATH = '/tmp/pillar'
-PidFile.new(piddir: PID_PATH, pidfile: "pillar.#{Process.pid}.pid")
+PID_PATH  = '/tmp/pillar'
+WORKER_ID = ENV['WORKER_ID']
+PidFile.new(piddir: PID_PATH, pidfile: "pillar.#{WORKER_ID}.pid")
 
 logger = Logger.new('/tmp/print-time.log')
 

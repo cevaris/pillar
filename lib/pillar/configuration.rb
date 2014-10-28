@@ -10,9 +10,11 @@ module Pillar
      
     def initialize
       @hosts      = ['127.0.0.1']
-      @etcd_hosts = ['127.0.0.1']
+      @etcd_hosts = '127.0.0.1'
       @log_path   = '/var/log/pillar.log'
+      
       @pid_dir    = '/tmp/pillar'
+      FileUtils::mkdir_p @pid_dir
     end
   end
      

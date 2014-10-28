@@ -15,10 +15,15 @@ module Pillar
     end
 
     def spawn
-      puts @args
-      raise "No file/script defined" if @args.empty?
+      # @args << '&'
+      @env['WORKER_ID'] = @worker_id
+      raise "No file/script defined" if @args.count < 1
       raise "File/Script does not exist: #{@args[0]}" if not File.exist?(@args[0])
-      system(@env, @args.join(' '))
+      puts "Execting #{@args}"
+      # (pid = fork) ? (Process.detach(pid); puts "Executed child PID#{pid}") : exec(@args.join(' '))
+      pid = Process.spawn(@env, @args.join(' '))
+      Process.detach(pid) if pid
+      # (pid = fork) ? (Process.detach(pid); puts "Executed child PID#{pid}") : exec(@args.join(' '))
     end
 
   end

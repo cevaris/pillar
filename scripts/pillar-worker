@@ -39,4 +39,5 @@ payload = Pillar::Worker.new(
 # puts JSON.parse wrk.to_json
 # puts (Pillar::Serialization.from_json wrk.to_json).inspect
 
-payload.spawn
+# payload.spawn
+puts payload.to_json
