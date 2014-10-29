@@ -25,6 +25,8 @@ module Pillar
 
 	  let(:example) {JSONExample.new}
 	  let(:example_json) {'{"json_class":"Pillar::JSONExample","data":{"var1":10,"var2":"test"}}'}
+	  let(:e2_json) {'{"json_class":"Pillar::Worker", "data":{"worker_id":"1234b0f4f92ed924a71dd77d56ff2c79", "args":["/git/pillar/examples/print-time.rb"], "env":{"MY_ENV":"/tmp/dump/blah"} } }'}
+  	
 
   	describe "#to_json" do
 

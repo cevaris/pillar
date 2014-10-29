@@ -5,10 +5,7 @@ require 'pillar'
 Pillar.configure do |config|
 end
 
-def etcd
- Etcd.client( host: Pillar.configuration.etcd_hosts, port: 4001 )
-end
-
+WORKERS_KEY = '/workers'
 service_threads = []
 child_threads   = []
 
@@ -21,6 +18,49 @@ at_exit {
 }
 
 
+def etcd
+ Etcd.client( host: Pillar.configuration.etcd_hosts, port: 4001 )
+end
+
+def spawn_worker(worker)
+  begin
+    worker.spawn
+  rescue => e
+    puts e.inspect
+    puts caller
+  end
+  puts "Spawned worker"
+end
+
+def worker_by_path(worker_path)
+  get_client  = etcd
+  worker_json = get_client.get(worker_path).value
+  worker      = Pillar::Serialization.from_json worker_json
+end
+def worker_by_id(worker_id)
+  key = "#{WORKERS_KEY}/#{worker_id}"
+  puts "Searching for key #{key}"
+  worker_path(key)
+end
+
+def dispatch_worker(event)
+  # Spawn new thread to handle new watch request
+  Thread.new {
+
+    case event.action
+    when 'set'
+      worker = worker_by_path(event.key)
+      puts "Got new worker #{event.key} #{worker}"
+      spawn_worker(worker)
+      puts "Spawned worker #{event.key}"
+    end
+
+    puts "Processed Worker Event #{event.key}"
+  } 
+end
+
+
+
 service_threads << Thread.new {
   listener = Listen.to(Pillar.configuration.pid_dir, only: /pillar\.\w+\.pid$/) do |modified, added, removed|
     puts "modified absolute path: #{modified}" unless modified.empty?
@@ -29,10 +69,13 @@ service_threads << Thread.new {
     unless removed.empty?
       puts "removed absolute path: #{removed}" 
       path = removed.first
-      # puts path.match(/pillar\.(\w+)\.pid$/).inspect
       worker_id = path.match(/pillar\.(\w+)\.pid$/)[1]
       if worker_id
         puts "Found WorkerID #{worker_id}"
+        worker = worker_by_id(worker_id)
+        puts "Got worker #{worker_id} info"
+        spawn_worker(worker)
+        puts "Spawning worker #{worker_id}"
       end
     end
 
@@ -47,30 +90,11 @@ service_threads << Thread.new {
 
   puts "Watching Etcd Key #{Pillar.configuration.etcd_hosts}:4001/v2/keys/workers"
   loop do 
-    etcd_event = watch_client.watch('/workers', recursive:true)
+    etcd_event = watch_client.watch(WORKERS_KEY, recursive:true)
 
     puts "Found Worker Event #{etcd_event.key}"
 
-    # Spawn new thread to handle new watch request
-    child_threads << Thread.new {
-      get_client = etcd
-      
-      case etcd_event.action
-      when 'set'
-        new_worker_json = get_client.get(etcd_event.key).value
-        new_worker      = Pillar::Serialization.from_json new_worker_json
-        puts "Got new worker #{etcd_event.key} #{new_worker}"
-        begin
-          new_worker.spawn
-        rescue => e
-          puts e.inspect
-          puts caller
-        end
-        puts "Spawned worker"
-      end
-
-      puts "Processed Worker Event #{etcd_event.key}"
-    }    
+    child_threads << dispatch_worker(etcd_event)   
   end
 }
 
