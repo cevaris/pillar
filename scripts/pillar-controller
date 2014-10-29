@@ -40,7 +40,7 @@ end
 def worker_by_id(worker_id)
   key = "#{WORKERS_KEY}/#{worker_id}"
   puts "Searching for key #{key}"
-  worker_path(key)
+  worker_by_path(key)
 end
 
 def dispatch_worker(event)
@@ -84,6 +84,8 @@ service_threads << Thread.new {
   puts "Watching pid path #{Pillar.configuration.pid_dir}"
   sleep
 }
+
+
 
 service_threads << Thread.new {
   watch_client = etcd
