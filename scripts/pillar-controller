@@ -23,6 +23,7 @@ def etcd
 end
 
 def spawn_worker(worker)
+  puts "Worker #{worker.inspect} type: #{worker.class}"
   begin
     worker.spawn
   rescue => e
@@ -50,7 +51,7 @@ def dispatch_worker(event)
     case event.action
     when 'set'
       worker = worker_by_path(event.key)
-      puts "Got new worker #{event.key} #{worker}"
+      puts "Got new worker #{event.key} #{worker.inspect}"
       spawn_worker(worker)
       puts "Spawned worker #{event.key}"
     end
@@ -100,8 +101,17 @@ service_threads << Thread.new {
   end
 }
 
-sleep
+# get '/' do
+#   {status: 'ok'}.to_json
+# end
 
+# post '/workers' do
+#   puts "Found new worker #{params.inspect}"
+#   # worker = Pillar::Serialization.from_json worker_json
+#   {status: 'ok'}.to_json
+# end
+
+sleep
 
 
 
