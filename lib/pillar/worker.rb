@@ -9,6 +9,7 @@ module Pillar
     def initialize(params=nil)
       params['args']      ||= []
       params['worker_id'] ||= SecureRandom.hex
+      params['host']      ||= HOSTNAME
       params.each do |k,v|
         instance_variable_set("@#{k}", v) unless v.nil?
       end

@@ -101,17 +101,32 @@ service_threads << Thread.new {
   end
 }
 
-# get '/' do
-#   {status: 'ok'}.to_json
-# end
 
-# post '/workers' do
-#   puts "Found new worker #{params.inspect}"
-#   # worker = Pillar::Serialization.from_json worker_json
-#   {status: 'ok'}.to_json
-# end
+class SinatraController < Sinatra::Base
 
-sleep
+  get '/v1/' do
+    {status: 'ok'}.to_json
+  end
+
+  post '/v1/workers/' do
+    request.body.rewind
+    payload = JSON.parse request.body.read
+
+    puts "Path:#{payload['args']}"
+    worker = Pillar::Worker.new 'args' => payload['args'], 'host' => Pillar::HOSTNAME
+
+    worker.to_json
+  end
+end
+
+SinatraController.run!
+
+# service_threads << Thread.new {SinatraController.run!}
+
+# sleep
+
+# child_threads.each   {|t| t.join}
+# service_threads.each {|t| t.join}
 
 
 

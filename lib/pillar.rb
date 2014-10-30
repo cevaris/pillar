@@ -9,6 +9,8 @@ require 'pidfile'
 require 'listen'
 require 'sinatra'
 require "sinatra/base"
+require 'socket'
+
 
 require "pillar/version"
 require "pillar/util"
@@ -19,6 +21,8 @@ require "pillar/configuration"
 
 
 module Pillar
+
+  HOSTNAME = Socket.gethostname
 
   class << self
     attr_accessor :configuration
