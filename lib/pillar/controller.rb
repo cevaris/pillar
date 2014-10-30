@@ -10,19 +10,26 @@ module Pillar
   end
   
   class SinatraController < Sinatra::Base
-    get '/' do
-      {status: 'ok'}.to_json
-    end
+      get '/v1/' do
+        {status: 'ok'}.to_json
+      end
 
-    post '/workers' do
-      "Created new worker #{SecureRandom.hex}"
-      worker = Worker.new
-      {status: 'ok'}.to_json
-    end
-    
-    get '/workers/:host/:hex' do
-      ""
-    end
+      get '/v1/host' do
+        {host: Pillar::HOSTNAME}.to_json
+      end
+
+      post '/v1/workers/' do
+        request.body.rewind
+        payload = JSON.parse request.body.read
+
+        # puts "Path:#{payload['args']}"
+        worker = Pillar::Worker.new 'args' => payload['args'], 
+                                    'daemon' => payload['args'], 
+                                    'host' => Pillar::HOSTNAME
+        puts "Worker: #{worker.inspect}"
+
+        worker.to_json
+      end
   end
 
 end
