@@ -75,7 +75,7 @@ service_threads << Thread.new {
         puts "Found WorkerID #{worker_id}"
         worker = worker_by_id(worker_id)
         puts "Got worker #{worker_id} info"
-        spawn_worker(worker)
+        spawn_worker(worker) if worker
         puts "Spawning worker #{worker_id}"
       end
     end

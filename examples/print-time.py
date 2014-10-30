@@ -20,12 +20,12 @@ else:
     file(pidfile, 'w').write(pid)
 
 def cleanup(*args):
-    # print "Removing file %s" % pidfile
     if os.path.exists(pidfile):
         os.remove(pidfile)
     sys.exit()
 
-# atexit.register(cleanup)
+
+atexit.register(cleanup)
 signal.signal(signal.SIGTERM, cleanup)
 ####
 
@@ -37,5 +37,8 @@ logging.basicConfig(filename='/tmp/print-time.log',level=logging.DEBUG)
 
 while True:
     logging.debug("Checkin: %s %d" % (pid, int(time.time())))
-    time.sleep(5)
+    try:
+        time.sleep(5)
+    except Exception: 
+        pass
 ####
