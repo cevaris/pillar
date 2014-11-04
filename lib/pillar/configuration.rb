@@ -5,7 +5,6 @@ module Pillar
 
     attr_accessor :hosts
     attr_accessor :log_path
-    attr_accessor :pid_dir
     attr_accessor :etcd_hosts
      
     def initialize
@@ -13,8 +12,9 @@ module Pillar
       @etcd_hosts = '127.0.0.1'
       @log_path   = '/var/log/pillar.log'
       
-      @pid_dir    = '/tmp/pillar'
-      FileUtils::mkdir_p @pid_dir
+      FileUtils::mkdir_p PID_PATH
+
+      PidFile.new(piddir: PID_PATH, pidfile: PID_FILE)
     end
   end
      

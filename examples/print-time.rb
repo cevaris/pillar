@@ -1,12 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'fileutils'
-require 'pidfile'
-require 'logger'
+require 'pillar'
 
-PID_PATH  = '/tmp/pillar'
-WORKER_ID = ENV['WORKER_ID']
-PidFile.new(piddir: PID_PATH, pidfile: "pillar.#{WORKER_ID}.pid")
+Pillar.configure do |config|
+  config.hosts = ['127.0.0.1']
+end
 
 logger = Logger.new('/tmp/print-time.log')
 
