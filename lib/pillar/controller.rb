@@ -7,26 +7,28 @@ module Pillar
   end
   
   class SinatraController < Sinatra::Base
-      set :port, 4444
+    set :port, 4444
 
-      get '/v1/' do
-        {status: 'ok'}.to_json
-      end
+    get '/v1/' do
+      {status: 'ok'}.to_json
+    end
 
-      get '/v1/host' do
-        {host: "#{Pillar::HOSTNAME}:#{settings.port}"}.to_json
-      end
+    get '/v1/host' do
+      {host: "#{Pillar::HOSTNAME}:#{settings.port}"}.to_json
+    end
 
-      post '/v1/workers/' do
-        request.body.rewind
-        payload = JSON.parse request.body.read
+    post '/v1/workers/' do
+      request.body.rewind
+      payload = JSON.parse request.body.read
 
-        worker = Pillar::Worker.new 'args' => payload['args'], 
-                                    'daemon' => payload['daemon']
-        puts "Worker: #{worker.inspect}"
+      worker = Pillar::Worker.new 'args' => payload['args'], 
+                                  'daemon' => payload['daemon']
+      puts "Worker: #{worker.inspect}"
 
-        worker.to_json
-      end
+      Pillar::EtcdWorker.save(worker)
+
+      worker.to_json
+    end
   end
 
 end

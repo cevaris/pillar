@@ -12,20 +12,22 @@ require "sinatra/base"
 require 'socket'
 
 
-require "pillar/version"
-require "pillar/util"
-require "pillar/json"
-require "pillar/worker"
-require "pillar/controller"
-require "pillar/configuration"
+require 'pillar/version'
+require 'pillar/util'
+require 'pillar/json'
+require 'pillar/worker'
+require 'pillar/controller'
+require 'pillar/persistence'
+require 'pillar/configuration'
 
 
 module Pillar
 
   HOSTNAME  = Socket.gethostname
   WORKER_ID = ENV['WORKER_ID'] || 'server'
-  PID_PATH  = '/tmp/pillar'
+  PID_DIR   = '/tmp/pillar'
   PID_FILE  = "pillar.#{WORKER_ID}.pid"
+  LOG_PATH  = '/var/log/pillar.log'
 
 
   class << self
