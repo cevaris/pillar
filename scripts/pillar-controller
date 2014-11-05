@@ -34,9 +34,10 @@ def spawn_worker(worker)
 end
 
 def worker_by_path(worker_path)
+  puts "Looking for worker #{worker_path}"
   get_client  = etcd
   worker_json = get_client.get(worker_path).value
-  worker      = Pillar::Serialization.from_json worker_json
+  worker_json ? Pillar::Serialization.from_json(worker_json) : nil
 end
 def worker_by_id(worker_id)
   key = "#{WORKERS_KEY}/#{worker_id}"
@@ -47,17 +48,22 @@ end
 def dispatch_worker(event)
   # Spawn new thread to handle new watch request
   Thread.new {
-
     case event.action
     when 'set'
+      puts "Got new worker #{event.key}"
       worker = worker_by_path(event.key)
-      puts "Got new worker #{event.key} #{worker.inspect}"
-      spawn_worker(worker)
-      puts "Spawned worker #{event.key}"
+      if worker
+        spawn_worker(worker)
+        puts "Spawned worker #{event.key}"
+      else
+        puts "Not Spawning worker for #{event.key}"
+      end
+    else
+      put "Dispatch failed for: #{event.action} #{event.inspect}"
     end
 
     puts "Processed Worker Event #{event.key}"
-  } 
+  }.join 
 end
 
 
@@ -74,9 +80,13 @@ service_threads << Thread.new {
       if worker_id
         puts "Found WorkerID #{worker_id}"
         worker = worker_by_id(worker_id)
-        puts "Got worker #{worker_id} info"
-        spawn_worker(worker) if worker
-        puts "Spawning worker #{worker_id}"
+        if worker
+          puts "Got worker #{worker_id} info"
+          spawn_worker(worker) 
+          puts "Spawning worker #{worker_id}"
+        else
+          puts "Dropping remove event for #{worker_id}"
+        end
       end
     end
 
@@ -97,7 +107,7 @@ service_threads << Thread.new {
 
     puts "Found Worker Event #{etcd_event.key}"
 
-    child_threads << dispatch_worker(etcd_event)   
+    dispatch_worker(etcd_event)   
   end
 }
 
